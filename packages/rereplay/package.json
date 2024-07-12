@@ -1,16 +1,16 @@
 {
-  "name": "pkg-a",
+  "name": "rereplay",
   "version": "0.0.1",
-  "description": "TODO",
+  "description": "A native `fetch`-caching solution for idempotent network requests!",
   "homepage": "TODO",
   "author": {
-    "name": "TODO",
-    "email": "TODO"
+    "name": "Matt Hamlin",
+    "email": "matthewjameshamlin@gmail.com"
   },
   "repository": {
     "type": "git",
     "url": "TODO",
-    "directory": "packages/pkg-a"
+    "directory": "packages/rereplay"
   },
   "exports": {
     ".": {

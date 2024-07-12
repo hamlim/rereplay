@@ -1,0 +1,12 @@
+[
+  [
+    "DCZKSb+GtSMAVIQ95TkJ",
+    {
+      "value": "{\"status\":200,\"statusText\":\"OK\",\"headers\":[[\"access-control-allow-headers\",\"User-Agent, Content-Type\"],[\"access-control-allow-methods\",\"GET\"],[\"access-control-allow-origin\",\"*\"],[\"access-control-max-age\",\"86400\"],[\"access-control-request-method\",\"GET\"],[\"alt-svc\",\"h3=\\\":443\\\"; ma=86400\"],[\"cache-control\",\"max-age=0, must-revalidate, no-cache, no-store, public, s-maxage=0\"],[\"cf-cache-status\",\"DYNAMIC\"],[\"cf-ray\",\"8a0d797f0a19cf45-SJC\"],[\"connection\",\"keep-alive\"],[\"content-encoding\",\"br\"],[\"content-type\",\"text/plain\"],[\"date\",\"Wed, 10 Jul 2024 03:30:20 GMT\"],[\"nel\",\"{\\\"success_fraction\\\":0,\\\"report_to\\\":\\\"cf-nel\\\",\\\"max_age\\\":604800}\"],[\"report-to\",\"{\\\"endpoints\\\":[{\\\"url\\\":\\\"https:\\\\/\\\\/a.nel.cloudflare.com\\\\/report\\\\/v4?s=FYtje1J1bX2c2URT7tU64tELdqujo2fsyE0F2juTZbCokM9srMHND9hCnpYCfC8qprPZyom1LkG%2B30KnKw25SuWnsHfY1TQnGYkiYvzMO6ExAcJz7qI1e%2FVGUx55mi4t%2FtfLAsE%3D\\\"}],\\\"group\\\":\\\"cf-nel\\\",\\\"max_age\\\":604800}\"],[\"retry-after\",\"60\"],[\"server\",\"cloudflare\"],[\"strict-transport-security\",\"max-age=15552000; includeSubDomains\"],[\"transfer-encoding\",\"chunked\"],[\"x-content-type-options\",\"nosniff\"],[\"x-frame-options\",\"DENY\"],[\"x-ratelimit-limit\",\"100\"],[\"x-ratelimit-remaining\",\"99\"],[\"x-ratelimit-reset\",\"1720582281\"],[\"x-xss-protection\",\"1; mode=block\"]],\"body\":\"What do you do when your bunny gets wet? You get your hare dryer.\",\"bodyType\":\"text\"}",
+      "createdAt": "2024-07-10T03:30:20.859Z",
+      "metadata": {
+        "requestString": "https://icanhazdadjoke.com/|GET|{\"accept\":\"text/plain\"}|"
+      }
+    }
+  ]
+]
