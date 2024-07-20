@@ -92,3 +92,89 @@ This library took a lot of inspiration (and code/implementation) from the follow
 - [`slapshot`](https://github.com/mattapperson/slapshot) by [Matt Apperson](https://github.com/mattapperson)
 - [`data-snapshot`](https://github.com/wayfair/data-snapshot) by [Nick Dreckshage](https://github.com/ndreckshage)
 
+
+## Docs:
+
+### Exports:
+
+This library exports the following interfaces:
+
+#### `setup`:
+
+```tsx
+export declare function setup({ name, cacheDir, staleAfter, }: {
+  name?: string;
+  cacheDir: string;
+  staleAfter?: number;
+}): {
+  configure(replayer: Replayer): void;
+  restore(): void;
+};
+```
+
+#### `Replayer`:
+
+```tsx
+export declare class Replayer {
+  fetch(
+    input: RequestInfo | URL | string,
+    init?: RequestInit
+  ): Promise<Response>;
+  requestToKey(
+    input: RequestInfo | URL | string,
+    init?: RequestInit
+  ): Promise<{
+    key: string;
+    requestString: string;
+  }>;
+  serializeResponse(response: Response): Promise<string>;
+  deserializeResponse(serializedString: string): Response;
+}
+```
+
+#### `originalFetch`:
+
+```tsx
+export declare let originalFetch: typeof globalThis.fetch;
+```
+
+#### `rereplayCache`:
+
+```tsx
+export declare let rereplayCache: PersistentMap<string, string>;
+```
+
+#### `PersistentMap`:
+
+```tsx
+export declare class PersistentMap<K, V> {
+  constructor({ name, staleAfter, cacheDir, }: {
+    name: string;
+    staleAfter?: number;
+    cacheDir: string;
+  });
+  setCacheFile(scope: string): void;
+  set(key: K, value: V, metadata?: Record<string, any>): this;
+  get(key: K): V | undefined;
+  has(key: K): boolean;
+  delete(key: K): boolean;
+  clear(): void;
+  entries(): IterableIterator<[K, V]>;
+  keys(): IterableIterator<K>;
+  values(): IterableIterator<V>;
+  forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void;
+  get size(): number;
+}
+```
+
+### `Replayer`s
+
+This library is meant to be pretty flexible for most use cases - the main way to customize the bevaior is to provide a custom `Replayer`.
+
+It's recommended to extend the base `Replayer`:
+
+```tsx
+class CustomReplayer extends Replayer {
+  // Override one of the default methods from the Replayer as needed
+}
+```

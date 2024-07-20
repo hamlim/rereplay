@@ -159,78 +159,6 @@ type SerializedResponse = {
   fileType?: string;
 };
 
-// export async function serializeResponse(response: Response): Promise<string> {
-//   const serialized: SerializedResponse = {
-//     status: response.status,
-//     statusText: response.statusText,
-//     headers: Array.from(response.headers.entries()),
-//     body: null,
-//     bodyType: 'text',
-//   };
-
-//   if (response.headers.get('content-type')?.includes('text/event-stream')) {
-//     serialized.bodyType = 'stream';
-
-//     const reader = response.body!.getReader();
-//     const chunks: string[] = [];
-//     while (true) {
-//       const { done, value } = await reader!.read();
-//       if (done) break;
-
-//       chunks.push(value.toString());
-//     }
-//     serialized.body = chunks.join(CHUNK_SPLITTER);
-//   } else {
-//     const clone = response.clone();
-//     try {
-//       const blob = await response.blob();
-
-//       if (blob.type.includes('application/json')) {
-//         serialized.bodyType = 'json';
-//         serialized.body = await response.text();
-//       } else if (!blob.type.includes('text/event-stream') && !blob.type.includes('text/plain')) {
-//         // Assume it's a file
-//         serialized.bodyType = 'file';
-//         serialized.fileType = blob.type;
-//         serialized.body = await blobToBase64(blob);
-//       } else {
-//         serialized.bodyType = 'text';
-//         serialized.body = await response.text();
-//       }
-//     } catch {
-//       serialized.bodyType = 'text';
-//       serialized.body = await clone.text();
-//     }
-//   }
-
-//   return JSON.stringify(serialized);
-// }
-
-// export function deserializeResponse(serializedString: string): Response {
-//   const serialized: SerializedResponse = JSON.parse(serializedString);
-//   let body: BodyInit | null = null;
-
-//   if (serialized.bodyType === 'stream' && serialized.body) {
-//     const chunks = serialized.body.split(CHUNK_SPLITTER).map((chunk) => new Uint8Array(chunk.split(',').map(Number)));
-//     body = new ReadableStream({
-//       start(controller) {
-//         chunks.forEach((chunk) => controller.enqueue(chunk));
-//         controller.close();
-//       },
-//     });
-//   } else if (serialized.bodyType === 'file' && serialized.body) {
-//     body = base64ToBlob(serialized.body);
-//   } else if (serialized.body) {
-//     body = serialized.body;
-//   }
-
-//   return new Response(body, {
-//     status: serialized.status,
-//     statusText: serialized.statusText,
-//     headers: new Headers(serialized.headers),
-//   });
-// }
-
 export async function blobToBase64(blob: Blob): Promise<string> {
   return JSON.stringify({
     type: blob.type,
@@ -245,76 +173,6 @@ export function base64ToBlob(serializedString: string): Blob {
   const buffer = Buffer.from(data, "base64");
   return new Blob([buffer], { type });
 }
-
-// export function removeDatesFromHeaders(headers: [string, string][]): [string, string][] {
-//   return headers.map(([key, value]) => [key, value.replace(/\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\b/, '')]);
-// }
-
-// export function hashString(input: string): string {
-//   return createHash('sha256').update(input).digest('hex');
-// }
-
-// export function cleanRequest<T extends Request | RequestInit>(request: T): T {
-//   const headers = new Headers(request.headers);
-//   if (headers.has('Authorization')) {
-//     headers.set('Authorization', `hashed_${hashString(headers.get('Authorization')!)}`);
-//   }
-//   if (headers.has('x-api-key')) {
-//     headers.set('x-api-key', `hashed_${hashString(headers.get('x-api-key')!)}`);
-//   }
-//   if (request instanceof Request) {
-//     return new Request(request.url, {
-//       method: request.method,
-//       headers: headers,
-//       body: request.body,
-//     }) as T;
-//   }
-//   return {
-//     method: request.method,
-//     headers: headers,
-//     body: request.body,
-//   } as T;
-// }
-
-// export async function requestToKey(
-//   input: RequestInfo | URL,
-//   init?: RequestInit,
-// ): Promise<{ key: string; requestString: string }> {
-//   const url = input instanceof URL ? input.href : typeof input === 'string' ? input : input.url;
-//   const method = init?.method || (input instanceof Request ? input.method : 'GET');
-
-//   const headers = init?.headers
-//     ? typeof init?.headers === 'string'
-//       ? JSON.parse(init.headers)
-//       : init.headers
-//     : input instanceof Request
-//       ? Object.fromEntries(input.headers)
-//       : {};
-//   const body = init?.body || (input instanceof Request ? input.body : '');
-//   const contentType = headers['content-type'];
-//   let bodyString =
-//     body instanceof Blob ? await body.text() : body instanceof FormData ? body.toString() : (body as string);
-
-//   // because multipart/form-data boundries include a hashed timestamp as a key frame
-//   // we need to remove the boundary from the body string to make it deterministic
-//   if (bodyString && contentType?.includes('multipart/form-data')) {
-//     headers['content-type'] = 'multipart/form-data';
-//     bodyString = bodyString.replace(/--+[a-zA-Z0-9]+/g, '').trim();
-//   }
-
-//   if (headers['authorization']) {
-//     delete headers['authorization'];
-//   }
-
-//   const dataToHash = `${url}|${method}|${JSON.stringify(headers)}|${bodyString}`;
-//   if (dataToHash.includes('[object ')) {
-//     console.log(dataToHash);
-//     throw new Error('Invalid data to hash, an object was not correctly stringified');
-//   }
-//   const hash = createHash('sha256').update(dataToHash).digest('base64');
-
-//   return { key: hash.slice(0, 20), requestString: dataToHash };
-// }
 
 // Core
 
@@ -348,24 +206,6 @@ export function setup({
     },
   };
 }
-
-// export async function replayer(input: RequestInfo | URL | string, init?: RequestInit): Promise<Response> {
-//   if (process.env.REREPLAY_ONLINE) {
-//     return await originalFetch(input, init);
-//   }
-
-//   let { key, requestString } = await requestToKey(input, init);
-
-//   if (!rereplayCache.has(key)) {
-//     let response = await originalFetch(input, init);
-//     let serializedResponse = await serializeResponse(response);
-//     rereplayCache.set(key, serializedResponse, { requestString });
-
-//     return deserializeResponse(serializedResponse);
-//   }
-
-//   return deserializeResponse(rereplayCache.get(key)!)
-// }
 
 export class Replayer {
   async fetch(
